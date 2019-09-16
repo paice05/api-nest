@@ -1,27 +1,88 @@
 import { InjectModel } from "@nestjs/mongoose";
+import { InternalServerErrorException } from '@nestjs/common';
 import { Model } from "mongoose";
 
 import { Author } from "./author.model";
 
 export class AuthorService {
 
-    constructor(@InjectModel('Author') private readonly authorModel: Model<Author>){}
-    
-    async insertAuthor(name: string, email: string){
-        const response = await this.authorModel.create({
-            name,
-            email,
-        });
-        return {
-            name: response.name,
-            email: response.email
+    // eslint-disable-next-line no-useless-constructor
+    constructor(@InjectModel('Author') private readonly authorModel: Model<Author>) { }
+
+    /**
+     * Insert new author
+     * @param data 
+     */
+    async insertAuthor(data): Promise<Author> {
+        try {
+            const response = await this.authorModel.create({
+                ...data
+            });
+            return response;
+        } catch (e) {
+            throw new InternalServerErrorException(e.message);
         }
     }
 
-    async getAuthor(){
-        const response = await this.authorModel.find();
+    /**
+     * List all author
+     */
+    async listAuthor(): Promise<Author[]> {
+        try {
+            const response = await this.authorModel.find();
 
-        return response
+            return response;
+        } catch (e) {
+            throw new InternalServerErrorException(e.message);
+        }
+    }
+
+    /**
+     * List sigle author
+     * @param id 
+     */
+    async listSingleAuthor(id): Promise<Author> {
+        try {
+            const response = await this.authorModel.findOne({ _id: id });
+
+            return response;
+        } catch (e) {
+            throw new InternalServerErrorException(e.message);
+        }
+    }
+
+    async updateAuthor(id, data) {
+        try {
+            const isAuthor = await this.authorModel.findOne({ _id: id });
+
+            // eslint-disable-next-line no-underscore-dangle
+            const response = await this.authorModel.updateOne({ _id: isAuthor._id }, {
+                $set: {
+                    ...data
+                }
+            });
+
+            return response;
+        } catch(e) {
+            throw new InternalServerErrorException(e.message);
+        }
+    }
+
+    /**
+     * Remove sigle author
+     * @param id 
+     */
+    async removeAuthor(id) {
+        try {
+            const isAuthor = await this.authorModel.findOne({ _id: id });
+
+            // eslint-disable-next-line no-underscore-dangle
+            const response = await this.authorModel.deleteOne({ _id: isAuthor._id });
+
+            return response;
+        } catch (e) {
+            throw new InternalServerErrorException(e.message);
+        }
     }
 
 }

@@ -2,9 +2,8 @@ version: '2.0'
 
 services:
     mongodb:
-        container_name: mongodb-blog
         image: mongo:4
-        container_name: mongodb
+        container_name: mongodb-blog
         restart: always
         environment:
             MONGO_INITDB_ROOT_USERNAME: 'root'

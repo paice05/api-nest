@@ -1,7 +1,10 @@
 import { Schema, Document } from 'mongoose';
 
 export const authorSchema = new Schema({
-    name: String,
+    name: {
+        type: String,
+        required: true
+    },
     email: String,
 });
 
