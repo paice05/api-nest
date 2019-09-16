@@ -1,2 +1,2 @@
-export * from './author.controller';
-export * from './post.controller'; 
+
+export * from './user.controller';

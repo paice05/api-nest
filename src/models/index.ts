@@ -1,2 +1,2 @@
-export * from './author.model';
-export * from './post.mdoel';
+
+export * from './user.model';

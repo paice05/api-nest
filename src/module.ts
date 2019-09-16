@@ -1,19 +1,30 @@
-import { Module } from '@nestjs/common';
+import { Module, MiddlewareConsumer } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 
-import { authorSchema, postSchema } from './models';
-import { AuthorController, PostController } from './controllers';
-import { AuthorService, PostService } from './services';
+import { CorsMiddleware } from '@nest-middlewares/cors';
+import { MorganMiddleware } from '@nest-middlewares/morgan';
+
+// import { AuthMiddleware } from './middleware/auth';
+
+import { userSchema } from './models';
+import { UserController } from './controllers';
+import { UserService } from './services';
 
 @Module({
   imports: [
-    MongooseModule.forRoot('mongodb://root:password@127.0.0.1:27019/blog?authSource=admin'),
+    MongooseModule.forRoot('mongodb://root:password@127.0.0.1:27019/blog?authSource=admin', { useNewUrlParser: true }),
     MongooseModule.forFeature([
-      { name: 'Author', schema: authorSchema },
-      { name: 'Post', schema: postSchema }
+      { name: 'User', schema: userSchema },
     ])
   ],
-  controllers: [AuthorController, PostController],
-  providers: [AuthorService, PostService],
+  controllers: [UserController],
+  providers: [UserService],
 })
-export class BaseModule { }
+export class AppModule {
+  static configure(consumer: MiddlewareConsumer) {
+    MorganMiddleware.configure('dev')
+    consumer
+      .apply(CorsMiddleware, MorganMiddleware)
+      .forRoutes(UserController)
+  }
+}
