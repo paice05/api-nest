@@ -2,7 +2,7 @@ import { InjectModel } from "@nestjs/mongoose";
 import { InternalServerErrorException } from '@nestjs/common';
 import { Model } from "mongoose";
 
-import { Author } from "./author.model";
+import { Author } from "../models/author.model";
 
 export class AuthorService {
 
@@ -51,6 +51,11 @@ export class AuthorService {
         }
     }
 
+    /**
+     * Update single author
+     * @param id 
+     * @param data 
+     */
     async updateAuthor(id, data) {
         try {
             const isAuthor = await this.authorModel.findOne({ _id: id });
@@ -63,7 +68,7 @@ export class AuthorService {
             });
 
             return response;
-        } catch(e) {
+        } catch (e) {
             throw new InternalServerErrorException(e.message);
         }
     }
